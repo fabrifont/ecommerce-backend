@@ -3,25 +3,17 @@ class ProductManager {
 		this.products = [];
 	}
 
-	addProduct(product) {
+	addProduct(title, description, price, thumbnail, code, stock) {
 		try {
-			this.products.forEach((listedProduct) => {
-				if (product.code === listedProduct.code)
-					throw new Error("Product code already exists.");
+			this.products.push({
+				id: this.products.length + 1,
+				title: title,
+				description: description,
+				price: price,
+				thumbnail: thumbnail,
+				code: code,
+				stock: stock,
 			});
-
-			if (
-				product.title &&
-				product.description &&
-				product.price &&
-				product.thumbnail &&
-				product.code &&
-				product.stock
-			) {
-				this.products.push(product);
-			} else {
-				throw new Error("There are one or more invalid fields in the product.");
-			}
 		} catch (error) {
 			console.error(error);
 		}
@@ -31,37 +23,26 @@ class ProductManager {
 		return this.products;
 	}
 
-	getProductByProperty(value, property) {
+	getProductById(id) {
+		const length = this.products.length;
+		let i;
 		try {
-			let filteredProducts = this.products.filter(
-				(item) => item[property] === value
-			);
-			if (filteredProducts.length === 0) {
-				throw new Error("Not found");
-			} else if (filteredProducts.length > 1) {
-				return filteredProducts;
-			} else {
-				return filteredProducts[0];
+			if (id < 1) throw new Error("ID cannot be less than one");
+			if (this.products[id - 1].id === id) return this.products[id - 1];
+			else if (
+				this.products[id - 1].id > id ||
+				this.products[id] === undefined
+			) {
+				i = this.products[id] === undefined ? length : id - 1;
 			}
+			while (0 < i) {
+				if (this.products[i].id === id) return this.products[i];
+				i - 1;
+			}
+			throw new Error("ID not found");
 		} catch (error) {
 			console.error(error);
 		}
-	}
-
-	getProductById(id) {
-		return this.getProductByProperty(id, "id");
-	}
-}
-
-class Product {
-	constructor(title, description, price, thumbnail, code, stock) {
-		this.id;
-		this.title = title;
-		this.description = description;
-		this.price = price;
-		this.thumbnail = thumbnail;
-		this.code = code;
-		this.stock = stock;
 	}
 }
 
@@ -69,8 +50,4 @@ class CartManager {
 	constructor() {}
 }
 
-class Cart {
-	constructor() {}
-}
-
-modules.export = { ProductManager, Product, CartManager, Cart };
+modules.export = { ProductManager, CartManager };
