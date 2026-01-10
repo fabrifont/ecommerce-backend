@@ -34,10 +34,56 @@ class ProductManager {
 		const productIndex = id_list.indexOf(id);
 		this.products.remove(productIndex);
 	}
+
+	updateProduct(id, property, value) {
+		try {
+			if (property === "id") throw new Error("ID is not modifiable");
+			if (this.products.length === 0) throw new Error("No products available");
+			if (!(property in this.products[0].keys))
+				throw new Error("Invalid property");
+			const id_list = this.products.map((product) => product.id);
+			const productIndex = id_list.indexOf(id);
+			this.products[productIndex][property] = value;
+		} catch (error) {
+			console.error(error);
+		}
+	}
 }
 
 class CartManager {
-	constructor() {}
+	constructor() {
+		this.carts = [];
+	}
+
+	addCart() {
+		this.carts.push({
+			id: this.carts.length + 1,
+			products: [],
+		});
+	}
+
+	getCart(id) {
+		const id_list = this.carts.map((cart) => cart.id);
+		const cartIndex = id_list.indexOf(id);
+		return this.carts[cartIndex].products;
+	}
+
+	addProductToCart(cart_id, product_id) {
+		try {
+			const id_list = this.carts[cart_id].map((product) => product.id);
+			const productIndex = id_list.indexOf(product_id);
+			if (productIndex === -1) {
+				this.carts[cart_id].push({
+					id: product_id,
+					quantity: 1,
+				});
+			} else {
+				this.carts[cart_id][productIndex].quantity += 1;
+			}
+		} catch (error) {
+			console.error(error);
+		}
+	}
 }
 
 modules.export = { ProductManager, CartManager };
