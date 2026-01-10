@@ -44,6 +44,12 @@ class ProductManager {
 			console.error(error);
 		}
 	}
+
+	deleteProduct(id) {
+		const id_list = this.products.map((product) => product.id);
+		const productIndex = id_list.indexOf(id);
+		this.products.remove(productIndex);
+	}
 }
 
 class CartManager {
