@@ -1,22 +1,23 @@
 {
-  "name": "coderhouse-backend1",
-  "version": "1.0.0",
-  "description": "Backend Project for Coderhouse",
-  "main": "app.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/fabrifont/coderhouse-backend1.git"
-  },
-  "author": "Fabrizio Fontanarrosa",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/fabrifont/coderhouse-backend1/issues"
-  },
-  "homepage": "https://github.com/fabrifont/coderhouse-backend1#readme",
-  "dependencies": {
-    "express": "^5.2.1"
-  }
+	"name": "coderhouse-backend1",
+	"version": "1.0.0",
+	"description": "Backend Project for Coderhouse",
+	"main": "app.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/fabrifont/coderhouse-backend1.git"
+	},
+	"author": "Fabrizio Fontanarrosa",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/fabrifont/coderhouse-backend1/issues"
+	},
+	"homepage": "https://github.com/fabrifont/coderhouse-backend1#readme",
+	"dependencies": {
+		"express": "^5.2.1"
+	},
+	"type": "module"
 }
