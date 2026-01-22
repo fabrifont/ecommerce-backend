@@ -1,3 +1,5 @@
+const fs = require("node:fs/promises");
+
 class ProductManager {
 	constructor() {
 		this.products = [];
