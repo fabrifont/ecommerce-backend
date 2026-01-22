@@ -5,16 +5,16 @@ export class ProductManager {
 		this.products = [];
 	}
 
-	addProduct(title, description, price, thumbnail, code, stock) {
+	addProduct(product) {
 		try {
 			this.products.push({
 				id: this.products.length + 1,
-				title: title,
-				description: description,
-				price: price,
-				thumbnail: thumbnail,
-				code: code,
-				stock: stock,
+				title: product.title,
+				description: product.description,
+				price: product.price,
+				thumbnail: product.thumbnail,
+				code: product.code,
+				stock: product.stock,
 			});
 		} catch (error) {
 			console.error(error);
