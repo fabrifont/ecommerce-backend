@@ -6,7 +6,6 @@ export class ProductManager {
 	}
 
 	addProduct(product) {
-		console.log("entre a addProduct");
 		const productAttributes = [
 			"id",
 			"title",
