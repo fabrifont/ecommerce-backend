@@ -14,14 +14,14 @@ const cartManager = new CartManager();
 //    GET /:
 //    Debe listar todos los productos de la base de datos.
 app.get("/products/", (req, res) => {
-	console.log("Petición GET / recibida");
+	console.log("Petición GET /products/ recibida");
 	res.send(productManager.products);
 });
 
 //    GET /:pid:
 //    Debe traer solo el producto con el id proporcionado.
 app.get("/products/:pid", (req, res) => {
-	console.log("Petición GET /:pid recibida");
+	console.log("Petición GET /products/:pid recibida");
 	const pid = req.params.pid;
 	const requestedProduct = productManager.getProductById(pid);
 	if (requestedProduct == undefined) res.send("Product not found");
@@ -49,7 +49,7 @@ app.get("/products/:pid", (req, res) => {
         thumbnails: Array de Strings (rutas donde están almacenadas las imágenes del producto).
 */
 app.post("/products/", (req, res) => {
-	console.log("Petición POST / recibida");
+	console.log("Petición POST /products/ recibida");
 	try {
 		const new_product = req.body;
 		productManager.addProduct(new_product);
@@ -63,7 +63,7 @@ app.post("/products/", (req, res) => {
 
 // TO DO: ARREGLAR CONDICION DEL ERROR DE INVALID PROPERTY EN EL MÉTODO.
 app.put("/products/:pid", (req, res) => {
-	console.log(`Petición PUT /${req.params.pid} recibida`);
+	console.log(`Petición PUT /products/${req.params.pid} recibida`);
 	try {
 		const body = req.body;
 		const pid = req.params.pid;
@@ -83,7 +83,7 @@ app.put("/products/:pid", (req, res) => {
 //    DELETE /:pid:
 //    Debe eliminar el producto con el pid indicado.
 app.delete("/products/:pid", (req, res) => {
-	console.log(`Petición DELETE /${req.params.pid} recibida`);
+	console.log(`Petición DELETE /products/${req.params.pid} recibida`);
 	const pid = req.params.pid;
 	productManager.deleteProduct(pid);
 	res.send();
@@ -98,8 +98,20 @@ app.delete("/products/:pid", (req, res) => {
         products: Array que contendrá objetos que representen cada producto.
 */
 
+app.post("/carts/", (req, res) => {
+	console.log(`Petición POST /carts/ recibida`);
+	cartManager.addCart();
+	res.send();
+});
+
 //    GET /:cid:
 //    Debe listar los productos que pertenecen al carrito con el cid proporcionado.
+app.get("/carts/:cid", (req, res) => {
+	console.log(`Petición GET /carts/${req.params.cid} recibida`);
+	const cid = req.params.cid;
+	const cart = cartManager.getCart(cid);
+	res.send(cart);
+});
 
 //    POST /:cid/product/:pid:
 /*    Debe agregar el producto al arreglo products del carrito seleccionado, utilizando el siguiente formato:
@@ -110,6 +122,18 @@ app.delete("/products/:pid", (req, res) => {
     Si un producto ya existente intenta agregarse, se debe incrementar el campo quantity de dicho producto.
 
 */
+app.post("/carts/:cid/product/:pid", (req, res) => {
+	try {
+		const cid = req.params.cid;
+		const pid = req.params.pid;
+		console.log(`Petición GET /carts/${cid}/product/${pid} recibida`);
+		cartManager.addProductToCart(cid, pid, productManager);
+		res.send();
+	} catch (error) {
+		console.error(error);
+	}
+});
+
 app.listen(PORT, () => {
 	console.log(`Servidor corriendo en el puerto ${PORT}`);
 });

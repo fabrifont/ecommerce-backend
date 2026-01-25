@@ -122,23 +122,43 @@ export class CartManager {
 		});
 	}
 
-	getCart(id) {
+	getCart(idString) {
+		const id = Number(idString);
 		const id_list = this.carts.map((cart) => cart.id);
 		const cartIndex = id_list.indexOf(id);
 		return this.carts[cartIndex].products;
 	}
 
-	addProductToCart(cart_id, product_id) {
+	addProductToCart(cartIdString, productIdString, productManagerInstance) {
 		try {
-			const id_list = this.carts[cart_id].map((product) => product.id);
-			const productIndex = id_list.indexOf(product_id);
-			if (productIndex === -1) {
-				this.carts[cart_id].push({
+			// finding requested cart
+			const cart_id = Number(cartIdString);
+			const cartIdList = this.carts.map((cart) => cart.id);
+			const requestedCartIndex = cartIdList.indexOf(cart_id);
+			if (requestedCartIndex < 0)
+				throw new Error(`Cart with ID ${cart_id} not found`);
+			const requestedCart = this.carts[requestedCartIndex];
+
+			// check if request product exists in product manager
+			const product_id = Number(productIdString);
+			const productIdList = productManagerInstance.products.map(
+				(product) => product.id,
+			);
+			if (!productIdList.includes(product_id))
+				throw new Error(`Product with ID ${product_id} not found`);
+
+			// finding requested product in requested cart
+			const cartProductsIdList = requestedCart.products.map(
+				(product) => product.id,
+			);
+			const cartProductIndex = cartProductsIdList.indexOf(product_id);
+			if (cartProductIndex === -1) {
+				requestedCart.products.push({
 					id: product_id,
 					quantity: 1,
 				});
 			} else {
-				this.carts[cart_id][productIndex].quantity += 1;
+				requestedCart.products[cartProductIndex].quantity += 1;
 			}
 		} catch (error) {
 			console.error(error);
