@@ -13,14 +13,14 @@ const cartManager = new CartManager();
 //Rutas para Manejo de Productos (/api/products/)
 //    GET /:
 //    Debe listar todos los productos de la base de datos.
-app.get("/", (req, res) => {
+app.get("/products/", (req, res) => {
 	console.log("Petición GET / recibida");
 	res.send(productManager.products);
 });
 
 //    GET /:pid:
 //    Debe traer solo el producto con el id proporcionado.
-app.get("/:pid", (req, res) => {
+app.get("/products/:pid", (req, res) => {
 	console.log("Petición GET /:pid recibida");
 	const pid = req.params.pid;
 	const requestedProduct = productManager.getProductById(pid);
@@ -48,7 +48,7 @@ app.get("/:pid", (req, res) => {
 
         thumbnails: Array de Strings (rutas donde están almacenadas las imágenes del producto).
 */
-app.post("/", (req, res) => {
+app.post("/products/", (req, res) => {
 	console.log("Petición POST / recibida");
 	try {
 		const new_product = req.body;
@@ -62,7 +62,7 @@ app.post("/", (req, res) => {
 //    Debe actualizar un producto por los campos enviados desde el body. No se debe actualizar ni eliminar el id al momento de hacer la actualización.
 
 // TO DO: ARREGLAR CONDICION DEL ERROR DE INVALID PROPERTY EN EL MÉTODO.
-app.put("/:pid", (req, res) => {
+app.put("/products/:pid", (req, res) => {
 	console.log(`Petición PUT /${req.params.pid} recibida`);
 	try {
 		const body = req.body;
@@ -82,7 +82,7 @@ app.put("/:pid", (req, res) => {
 
 //    DELETE /:pid:
 //    Debe eliminar el producto con el pid indicado.
-app.delete("/:pid", (req, res) => {
+app.delete("/products/:pid", (req, res) => {
 	console.log(`Petición DELETE /${req.params.pid} recibida`);
 	const pid = req.params.pid;
 	productManager.deleteProduct(pid);
