@@ -105,6 +105,10 @@ export class ProductManager {
 			const data = await fs.readFile(file);
 			this.products = JSON.parse(data);
 		} catch (error) {
+			if (error.code === "ENOENT") {
+				await fs.writeFile(file, "[]", "utf8");
+				return;
+			}
 			throw error;
 		}
 	}
@@ -123,10 +127,15 @@ export class CartManager {
 	}
 
 	getCart(idString) {
-		const id = Number(idString);
-		const id_list = this.carts.map((cart) => cart.id);
-		const cartIndex = id_list.indexOf(id);
-		return this.carts[cartIndex].products;
+		try {
+			const id = Number(idString);
+			const id_list = this.carts.map((cart) => cart.id);
+			const cartIndex = id_list.indexOf(id);
+			if (cartIndex < 0) throw new Error(`Cart with ID ${id} not found`);
+			return this.carts[cartIndex].products;
+		} catch (error) {
+			throw error;
+		}
 	}
 
 	addProductToCart(cartIdString, productIdString, productManagerInstance) {
@@ -178,8 +187,12 @@ export class CartManager {
 	async load(file) {
 		try {
 			const data = await fs.readFile(file);
-			this.products = JSON.parse(data);
+			this.carts = JSON.parse(data);
 		} catch (error) {
+			if (error.code === "ENOENT") {
+				await fs.writeFile(file, "[]", "utf8");
+				return;
+			}
 			throw error;
 		}
 	}

@@ -4,11 +4,11 @@ import express from "express";
 const app = express();
 const PORT = 8080;
 app.use(express.json());
-let products = [];
-let carts = [];
 
 const productManager = new ProductManager();
+productManager.load("./products.json");
 const cartManager = new CartManager();
+cartManager.load("./carts.json");
 
 //Rutas para Manejo de Productos (/api/products/)
 //    GET /:
@@ -54,6 +54,7 @@ app.post("/products/", (req, res) => {
 		const new_product = req.body;
 		productManager.addProduct(new_product);
 		res.send();
+		productManager.save("./products.json");
 	} catch (error) {
 		res.send(error);
 	}
@@ -61,7 +62,6 @@ app.post("/products/", (req, res) => {
 //    PUT /:pid:
 //    Debe actualizar un producto por los campos enviados desde el body. No se debe actualizar ni eliminar el id al momento de hacer la actualización.
 
-// TO DO: ARREGLAR CONDICION DEL ERROR DE INVALID PROPERTY EN EL MÉTODO.
 app.put("/products/:pid", (req, res) => {
 	console.log(`Petición PUT /products/${req.params.pid} recibida`);
 	try {
@@ -74,6 +74,7 @@ app.put("/products/:pid", (req, res) => {
 			productManager.updateProduct(pid, keys[i], values[i]);
 		}
 		res.send();
+		productManager.save("products.json");
 	} catch (error) {
 		console.error(error);
 		res.send(error);
@@ -87,6 +88,7 @@ app.delete("/products/:pid", (req, res) => {
 	const pid = req.params.pid;
 	productManager.deleteProduct(pid);
 	res.send();
+	productManager.save("./products.json");
 });
 
 //Rutas para Manejo de Carritos (/api/carts/)
@@ -102,6 +104,7 @@ app.post("/carts/", (req, res) => {
 	console.log(`Petición POST /carts/ recibida`);
 	cartManager.addCart();
 	res.send();
+	cartManager.save("./carts.json");
 });
 
 //    GET /:cid:
@@ -129,6 +132,7 @@ app.post("/carts/:cid/product/:pid", (req, res) => {
 		console.log(`Petición GET /carts/${cid}/product/${pid} recibida`);
 		cartManager.addProductToCart(cid, pid, productManager);
 		res.send();
+		cartManager.save("./carts.json");
 	} catch (error) {
 		console.error(error);
 	}
