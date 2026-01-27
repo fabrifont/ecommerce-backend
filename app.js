@@ -1,24 +1,28 @@
 import { ProductManager, CartManager } from "./classes.mjs";
 import express from "express";
+import handlebars from "express-handlebars";
+const __dirname = import.meta.dirname;
 
 const app = express();
 const PORT = 8080;
 app.use(express.json());
+app.use(express.static("public"));
+app.set("view engine", "handlebars");
+app.engine("handlebars", handlebars.engine());
+
+// ----------------------------  API: Manejo de productos  ---------------------------------------
 
 const productManager = new ProductManager();
 productManager.load("./products.json");
-const cartManager = new CartManager();
-cartManager.load("./carts.json");
 
-//Rutas para Manejo de Productos (/api/products/)
-//    GET /:
+//    GET /products/
 //    Debe listar todos los productos de la base de datos.
 app.get("/products/", (req, res) => {
 	console.log("Petición GET /products/ recibida");
 	res.send(productManager.products);
 });
 
-//    GET /:pid:
+//    GET /products/:pid
 //    Debe traer solo el producto con el id proporcionado.
 app.get("/products/:pid", (req, res) => {
 	console.log("Petición GET /products/:pid recibida");
@@ -28,8 +32,9 @@ app.get("/products/:pid", (req, res) => {
 	res.send(requestedProduct);
 });
 
-//    POST /:
+//    POST /products/
 /*    Debe agregar un nuevo producto con los siguientes campos:
+
         id: Number/String (No se manda desde el body, se autogenera para asegurar que nunca se repitan los ids).
 
         title: String
@@ -59,7 +64,7 @@ app.post("/products/", (req, res) => {
 		res.send(error);
 	}
 });
-//    PUT /:pid:
+//    PUT /products/:pid
 //    Debe actualizar un producto por los campos enviados desde el body. No se debe actualizar ni eliminar el id al momento de hacer la actualización.
 
 app.put("/products/:pid", (req, res) => {
@@ -81,7 +86,7 @@ app.put("/products/:pid", (req, res) => {
 	}
 });
 
-//    DELETE /:pid:
+//    DELETE /products/:pid
 //    Debe eliminar el producto con el pid indicado.
 app.delete("/products/:pid", (req, res) => {
 	console.log(`Petición DELETE /products/${req.params.pid} recibida`);
@@ -91,13 +96,17 @@ app.delete("/products/:pid", (req, res) => {
 	productManager.save("./products.json");
 });
 
-//Rutas para Manejo de Carritos (/api/carts/)
+// ----------------------------  API: Manejo de carritos  ---------------------------------------
 
-//    POST /:
+const cartManager = new CartManager();
+cartManager.load("./carts.json");
+
+//    POST /carts/
 /*    Debe crear un nuevo carrito con la siguiente estructura:
-        id: Number/String (Autogenerado para asegurar que nunca se dupliquen los ids).
 
-        products: Array que contendrá objetos que representen cada producto.
+            id: Number/String (Autogenerado para asegurar que nunca se dupliquen los ids).
+
+            products: Array que contendrá objetos que representen cada producto.
 */
 
 app.post("/carts/", (req, res) => {
@@ -107,7 +116,7 @@ app.post("/carts/", (req, res) => {
 	cartManager.save("./carts.json");
 });
 
-//    GET /:cid:
+//    GET /carts/:cid
 //    Debe listar los productos que pertenecen al carrito con el cid proporcionado.
 app.get("/carts/:cid", (req, res) => {
 	console.log(`Petición GET /carts/${req.params.cid} recibida`);
@@ -116,11 +125,12 @@ app.get("/carts/:cid", (req, res) => {
 	res.send(cart);
 });
 
-//    POST /:cid/product/:pid:
+//    POST /carts/:cid/product/:pid
 /*    Debe agregar el producto al arreglo products del carrito seleccionado, utilizando el siguiente formato:
-        product: Solo debe contener el ID del producto.
 
-        quantity: Debe contener el número de ejemplares de dicho producto (se agregará de uno en uno).
+            product: Solo debe contener el ID del producto.
+
+            quantity: Debe contener el número de ejemplares de dicho producto (se agregará de uno en uno).
 
     Si un producto ya existente intenta agregarse, se debe incrementar el campo quantity de dicho producto.
 
@@ -137,6 +147,14 @@ app.post("/carts/:cid/product/:pid", (req, res) => {
 		console.error(error);
 	}
 });
+
+// ----------------------------  Server Side Rendering (Handlebars)  ---------------------------------------
+
+app.get("/", (req, res) => {
+	res.render("index", { layout: "main.handlebars" });
+});
+
+// ---------------------------------------------------------------------------------------------------------
 
 app.listen(PORT, () => {
 	console.log(`Servidor corriendo en el puerto ${PORT}`);
