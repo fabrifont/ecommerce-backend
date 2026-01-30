@@ -1,7 +1,9 @@
 import { ProductManager, CartManager } from "./classes.mjs";
 import express from "express";
 import handlebars from "express-handlebars";
-import productsRouter from "./routers/productsRouter";
+import productsRouter from "./routers/productsRouter.js";
+import cartsRouter from "./routers/cartsRouter.js";
+import viewsRouter from "./routers/viewsRouter.js";
 const __dirname = import.meta.dirname;
 
 const app = express();
@@ -25,12 +27,7 @@ app.use("/carts", cartsRouter(cartManager));
 
 // ----------------------------  Server Side Rendering (Handlebars)  ---------------------------------------
 
-app.get("/", (req, res) => {
-	res.render("index", {
-		layout: "main.handlebars",
-		products: productManager.products,
-	});
-});
+app.use("/", viewsRouter(productManager));
 
 // ---------------------------------------------------------------------------------------------------------
 
