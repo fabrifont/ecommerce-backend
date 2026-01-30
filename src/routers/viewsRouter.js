@@ -1,12 +1,14 @@
-const express = require("express");
+import express from "express";
 
-const router = express.Router();
+export default function viewsRouter(productManager) {
+	const router = express.Router();
 
-router.get("/", (req, res) => {
-	res.render("index", {
-		layout: "main.handlebars",
-		products: productManager.products,
+	router.get("/", (req, res) => {
+		res.render("index", {
+			layout: "main.handlebars",
+			products: productManager.products,
+		});
 	});
-});
 
-module.exports = router;
+	return router;
+}
