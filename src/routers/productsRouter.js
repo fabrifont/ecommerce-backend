@@ -1,18 +1,18 @@
-const express = require("express");
+import express from "express";
 
 export default function productsRouter(productManager) {
 	const router = express.Router();
 
 	//    GET /products/
 	//    Debe listar todos los productos de la base de datos.
-	router.get("/products/", (req, res) => {
+	router.get("/", (req, res) => {
 		console.log("Petición GET /products/ recibida");
 		res.send(productManager.products);
 	});
 
 	//    GET /products/:pid
 	//    Debe traer solo el producto con el id proporcionado.
-	router.get("/products/:pid", (req, res) => {
+	router.get("/:pid", (req, res) => {
 		console.log("Petición GET /products/:pid recibida");
 		const pid = req.params.pid;
 		const requestedProduct = productManager.getProductById(pid);
@@ -41,7 +41,7 @@ export default function productsRouter(productManager) {
 
         thumbnails: Array de Strings (rutas donde están almacenadas las imágenes del producto).
 */
-	router.post("/products/", (req, res) => {
+	router.post("/", (req, res) => {
 		console.log("Petición POST /products/ recibida");
 		try {
 			const new_product = req.body;
@@ -55,7 +55,7 @@ export default function productsRouter(productManager) {
 	//    PUT /products/:pid
 	//    Debe actualizar un producto por los campos enviados desde el body. No se debe actualizar ni eliminar el id al momento de hacer la actualización.
 
-	router.put("/products/:pid", (req, res) => {
+	router.put("/:pid", (req, res) => {
 		console.log(`Petición PUT /products/${req.params.pid} recibida`);
 		try {
 			const body = req.body;
@@ -76,7 +76,7 @@ export default function productsRouter(productManager) {
 
 	//    DELETE /products/:pid
 	//    Debe eliminar el producto con el pid indicado.
-	router.delete("/products/:pid", (req, res) => {
+	router.delete("/:pid", (req, res) => {
 		console.log(`Petición DELETE /products/${req.params.pid} recibida`);
 		const pid = req.params.pid;
 		productManager.deleteProduct(pid);

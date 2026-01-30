@@ -1,4 +1,4 @@
-const express = require("express");
+import express from "express";
 
 export default function cartsRouter(cartManager) {
 	const router = express.Router();
@@ -11,7 +11,7 @@ export default function cartsRouter(cartManager) {
             products: Array que contendrá objetos que representen cada producto.
 */
 
-	router.post("/carts/", (req, res) => {
+	router.post("/", (req, res) => {
 		console.log(`Petición POST /carts/ recibida`);
 		cartManager.addCart();
 		res.send();
@@ -20,7 +20,7 @@ export default function cartsRouter(cartManager) {
 
 	//    GET /carts/:cid
 	//    Debe listar los productos que pertenecen al carrito con el cid proporcionado.
-	router.get("/carts/:cid", (req, res) => {
+	router.get("/:cid", (req, res) => {
 		console.log(`Petición GET /carts/${req.params.cid} recibida`);
 		const cid = req.params.cid;
 		const cart = cartManager.getCart(cid);
@@ -37,7 +37,7 @@ export default function cartsRouter(cartManager) {
     Si un producto ya existente intenta agregarse, se debe incrementar el campo quantity de dicho producto.
 
 */
-	router.post("/carts/:cid/product/:pid", (req, res) => {
+	router.post("/:cid/product/:pid", (req, res) => {
 		try {
 			const cid = req.params.cid;
 			const pid = req.params.pid;
