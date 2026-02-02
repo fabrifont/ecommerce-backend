@@ -22,32 +22,32 @@ export default function productsRouter(productManager) {
 
 	//    POST /products/
 	/*    Debe agregar un nuevo producto con los siguientes campos:
-
-        id: Number/String (No se manda desde el body, se autogenera para asegurar que nunca se repitan los ids).
-
-        title: String
-
-        description: String
-
-        code: String
-
-        price: Number
-
-        status: Boolean
-
-        stock: Number
-
-        category: String
-
-        thumbnails: Array de Strings (rutas donde están almacenadas las imágenes del producto).
+            id: Number/String (No se manda desde el body, se autogenera para asegurar que nunca se repitan los ids).
+            title: String
+            description: String
+            code: String
+            price: Number
+            status: Boolean
+            stock: Number
+            category: String
+            thumbnails: Array de Strings (rutas donde están almacenadas las imágenes del producto).
 */
-	router.post("/", (req, res) => {
+	router.post("/", async (req, res) => {
 		console.log("Petición POST /products/ recibida");
 		try {
 			const new_product = req.body;
 			productManager.addProduct(new_product);
+			await productManager.save("./products.json");
+			req.app.render(
+				"index",
+				{
+					products: productManager.products,
+				},
+				(err, html) => {
+					req.io.emit("update-list", html);
+				},
+			);
 			res.send();
-			productManager.save("./products.json");
 		} catch (error) {
 			res.send(error);
 		}
@@ -55,7 +55,7 @@ export default function productsRouter(productManager) {
 	//    PUT /products/:pid
 	//    Debe actualizar un producto por los campos enviados desde el body. No se debe actualizar ni eliminar el id al momento de hacer la actualización.
 
-	router.put("/:pid", (req, res) => {
+	router.put("/:pid", async (req, res) => {
 		console.log(`Petición PUT /products/${req.params.pid} recibida`);
 		try {
 			const body = req.body;
@@ -66,8 +66,17 @@ export default function productsRouter(productManager) {
 			for (let i = 0; i < amount; i++) {
 				productManager.updateProduct(pid, keys[i], values[i]);
 			}
+			await productManager.save("products.json");
+			req.app.render(
+				"index",
+				{
+					products: productManager.products,
+				},
+				(err, html) => {
+					req.io.emit("update-list", html);
+				},
+			);
 			res.send();
-			productManager.save("products.json");
 		} catch (error) {
 			console.error(error);
 			res.send(error);
@@ -76,12 +85,21 @@ export default function productsRouter(productManager) {
 
 	//    DELETE /products/:pid
 	//    Debe eliminar el producto con el pid indicado.
-	router.delete("/:pid", (req, res) => {
+	router.delete("/:pid", async (req, res) => {
 		console.log(`Petición DELETE /products/${req.params.pid} recibida`);
 		const pid = req.params.pid;
 		productManager.deleteProduct(pid);
+		await productManager.save("./products.json");
+		req.app.render(
+			"index",
+			{
+				products: productManager.products,
+			},
+			(err, html) => {
+				req.io.emit("update-list", html);
+			},
+		);
 		res.send();
-		productManager.save("./products.json");
 	});
 
 	return router;
